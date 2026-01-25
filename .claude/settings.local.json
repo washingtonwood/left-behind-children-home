@@ -10,7 +10,11 @@
       "Bash(git config:*)",
       "Bash(git remote add origin:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(mysql:*)",
+      "Bash(where:*)",
+      "Bash(\"C:\\\\Program Files\\\\MySQL\\\\MySQL Server 8.0\\\\bin\\\\mysql.exe\" -uroot -p123456 --default-character-set=utf8mb4 -e \"USE school; DESCRIBE notification; SELECT * FROM notification LIMIT 3;\")",
+      "Bash(\"C:\\\\Program Files\\\\MySQL\\\\MySQL Server 8.0\\\\bin\\\\mysql.exe\":*)"
     ]
   }
 }
