@@ -37,7 +37,6 @@
 #### 前端展示网站
 - **Vue 3** - 渐进式 JavaScript 框架
 - **Vue Router** - 路由管理
-- **Pinia** - 状态管理
 - **Vite** - 构建工具
 - **Axios** - HTTP 客户端
 - **Tailwind CSS** - 实用优先 CSS 框架
@@ -46,7 +45,6 @@
 #### 管理后台
 - **Vue 3** - 核心框架
 - **Vue Router** - 路由管理
-- **Pinia** - 状态管理
 - **Element Plus** 或 **Ant Design Vue** - 企业级 UI 组件库
 - **Vite** - 构建工具
 - **Axios** - HTTP 客户端
@@ -60,11 +58,8 @@
   - **Spring Security** - 安全认证（JWT）
   - **Spring Data JPA** - 数据持久化
   - **Spring Validation** - 数据验证
-  - **Spring Cache** - 缓存管理
-- **MyBatis-Plus** - ORM 框架（可选，或使用 JPA）
 - **MySQL 8.0** - 关系型数据库
-- **Redis** - 缓存和会话存储
-- **Druid** 或 **HikariCP** - 数据库连接池
+- **HikariCP** - 数据库连接池（Spring Boot 默认）
 
 ### 开发工具
 - **Maven** 或 **Gradle** - 项目构建
@@ -91,7 +86,6 @@
                      │
          ┌───────────▼───────────┐
          │   MySQL 8.0          │
-         │   Redis              │
          └──────────────────────┘
 ```
 
@@ -139,7 +133,6 @@
   ├── views/           # 页面组件
   ├── components/      # 可复用组件
   ├── router/          # 路由配置
-  ├── store/           # Pinia 状态管理
   ├── api/             # API 请求封装
   ├── utils/           # 工具函数
   ├── composables/     # 组合式函数
@@ -152,6 +145,7 @@
   - 组件 props 使用 `defineProps`
   - 事件使用 `defineEmits`
   - 响应式数据使用 `ref` 和 `reactive`
+  - 状态管理：使用 `reactive` 或组件本地状态，无需额外状态管理库
 
 #### API 设计规范
 - **RESTful 风格**：
@@ -183,8 +177,8 @@
 
 ### 架构模式
 - **前后端分离**：通过 RESTful API 通信
-- **MVVM 模式**：Vue 前端采用 Model-View-ViewModel
-- **三层架构**：后端采用 Controller-Service-Mapper
+- **MVC 模式**：Vue 前端采用组件化开发
+- **三层架构**：后端采用 Controller-Service-Repository
 - **JWT 认证**：无状态认证机制
 - **RBAC 权限模型**：基于角色的访问控制
 
@@ -451,7 +445,7 @@
 - **内容审核**：所有发布内容需审核
 
 ### 安全要求
-- **认证授权**：JWT + Redis 黑名单机制
+- **认证授权**：JWT 认证机制
 - **密码加密**：BCrypt 哈希加密
 - **SQL 注入防护**：使用参数化查询
 - **XSS 防护**：前端输入过滤和转义
@@ -477,16 +471,6 @@
 <dependency>
     <groupId>com.mysql</groupId>
     <artifactId>mysql-connector-j</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.baomidou</groupId>
-    <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-</dependency>
-
-<!-- Redis -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
 </dependency>
 
 <!-- 安全 -->
@@ -518,7 +502,6 @@
   "dependencies": {
     "vue": "^3.4.0",
     "vue-router": "^4.2.0",
-    "pinia": "^2.1.0",
     "axios": "^1.6.0",
     "element-plus": "^2.5.0",
     "echarts": "^5.4.0"
@@ -537,10 +520,6 @@
   - 数据库：shourutongxing（从 school 迁移）
   - 用户：root
   - 密码：123456
-
-- **Redis**
-  - 地址：localhost:6379
-  - 用于：缓存、会话、限流
 
 ### 支付服务
 - **微信支付**
