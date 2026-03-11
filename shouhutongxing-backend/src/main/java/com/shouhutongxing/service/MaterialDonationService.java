@@ -70,7 +70,15 @@ public class MaterialDonationService {
         donation.setStatus(MaterialDonation.DonationStatus.CREATED);
 
         // 3. 设置接收地址
-        donation.setReceiverAddress(RECEIVER_ADDRESS);
+        // 邮寄方式使用请求中的接收地址，上门取件使用固定地址
+        if (request.getDonationMethod() == MaterialDonation.DonationMethod.MAIL) {
+            if (request.getReceiverAddress() == null || request.getReceiverAddress().trim().isEmpty()) {
+                throw new IllegalArgumentException("邮寄方式需要填写接收地址");
+            }
+            donation.setReceiverAddress(request.getReceiverAddress());
+        } else {
+            donation.setReceiverAddress(RECEIVER_ADDRESS);
+        }
 
         // 4. 处理物资明细
         List<MaterialItem> items = new ArrayList<>();
@@ -81,9 +89,14 @@ public class MaterialDonationService {
             MaterialItem item = createMaterialItem(donation.getDonationNo(), itemRequest);
             items.add(item);
             totalItems += item.getQuantity();
-            totalValue = totalValue.add(
-                    item.getEstimatedValue().multiply(BigDecimal.valueOf(item.getQuantity()))
-            );
+
+            // 计算估算价值，如果为null则跳过
+            BigDecimal estimatedValue = item.getEstimatedValue();
+            if (estimatedValue != null) {
+                totalValue = totalValue.add(
+                        estimatedValue.multiply(BigDecimal.valueOf(item.getQuantity()))
+                );
+            }
         }
 
         // 5. 保存捐赠记录（先保存以获取ID）

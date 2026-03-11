@@ -177,10 +177,15 @@ public class FundDonationService {
     }
 
     private BigDecimal getTargetAmount(FundDonation.ProjectType projectType) {
-        return switch (projectType) {
-            case EDUCATION -> BigDecimal.valueOf(500000);
-            case MEDICAL -> BigDecimal.valueOf(300000);
-            case LIVING -> BigDecimal.valueOf(200000);
-        };
+        switch (projectType) {
+            case EDUCATION:
+                return BigDecimal.valueOf(500000);
+            case MEDICAL:
+                return BigDecimal.valueOf(300000);
+            case LIVING:
+                return BigDecimal.valueOf(200000);
+            default:
+                return BigDecimal.ZERO;
+        }
     }
 }

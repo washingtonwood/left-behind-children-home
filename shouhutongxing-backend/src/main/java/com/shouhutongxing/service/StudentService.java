@@ -236,6 +236,7 @@ public class StudentService {
         // 收入水平统计
         List<Object[]> incomeStats = studentRepository.countByFamilyIncomeLevel();
         Map<String, Long> incomeCount = incomeStats.stream()
+                .filter(arr -> arr[0] != null)  // 过滤掉空值
                 .collect(Collectors.toMap(
                         arr -> arr[0].toString(),
                         arr -> (Long) arr[1]

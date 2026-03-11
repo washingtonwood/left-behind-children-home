@@ -54,6 +54,11 @@ public class MaterialDonationRequest {
     private String donorAddress;
 
     /**
+     * 接收地址（邮寄方式必填）
+     */
+    private String receiverAddress;
+
+    /**
      * 备注
      */
     private String remark;
