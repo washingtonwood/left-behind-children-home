@@ -422,6 +422,9 @@
             }
         }
     </script>
+    <!-- 引入通用工具函数 -->
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/utils.js" defer></script>
 </head>
 <body class="font-sans text-gray-700 bg-gradient-to-br from-gray-50 via-orange-50/30 to-amber-50/30 min-h-screen antialiased">
 
@@ -1199,49 +1202,118 @@
 
         // 初始化表单提交
         function initFormSubmit() {
-            document.getElementById('donationForm').addEventListener('submit', async function(e) {
+            const form = document.getElementById('donationForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
                 // 收集表单数据
                 const formData = new FormData(this);
                 const request = {
-                    donorName: formData.get('donorName'),
-                    donorPhone: formData.get('donorPhone'),
-                    donorEmail: formData.get('donorEmail') || null,
+                    donorName: formData.get('donorName')?.trim(),
+                    donorPhone: formData.get('donorPhone')?.trim(),
+                    donorEmail: formData.get('donorEmail')?.trim() || null,
                     donationMethod: formData.get('donationMethod'),
-                    donorAddress: formData.get('donorAddress') || null,
-                    remark: formData.get('remark') || null,
+                    donorAddress: formData.get('donorAddress')?.trim() || null,
+                    receiverAddress: formData.get('receiverAddress')?.trim() || null,
+                    remark: formData.get('remark')?.trim() || null,
                     items: collectItems(formData)
                 };
 
-                // 验证物资明细
-                if (!request.items || request.items.length === 0) {
-                    alert('请至少添加一个物资明细');
+                // 表单验证
+                const validation = validateDonationForm(request);
+                if (!validation.valid) {
+                    utils.showToast(validation.error, 'warning');
                     return;
                 }
 
+                // 显示加载状态
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<div class="loading-spinner"></div> 提交中...';
+                utils.showLoading('提交捐赠信息...');
+
                 // 提交数据
                 try {
-                    const response = await fetch(`${API_BASE}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(request)
-                    });
-
-                    const result = await response.json();
+                    const result = await utils.post('/material-donations', request);
 
                     if (result.code === 0) {
+                        utils.showToast('捐赠登记成功！感谢您的爱心', 'success');
                         showSuccessMessage(result.data);
                     } else {
-                        alert(result.message || '提交失败，请稍后重试');
+                        utils.showToast(result.message || '提交失败，请稍后重试', 'error');
                     }
                 } catch (error) {
                     console.error('提交失败:', error);
-                    alert('提交失败，请检查网络连接后重试');
+                    utils.showToast('网络连接失败，请检查后端服务', 'error');
+                } finally {
+                    utils.hideLoading();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '提交捐赠';
                 }
             });
+        }
+
+        // 表单验证
+        function validateDonationForm(request) {
+            // 验证捐赠者姓名
+            if (!request.donorName) {
+                return { valid: false, error: '请输入捐赠者姓名' };
+            }
+
+            // 验证手机号
+            if (!utils.isValidPhone(request.donorPhone)) {
+                return { valid: false, error: '请输入正确的手机号' };
+            }
+
+            // 验证邮箱（如果填写了）
+            if (request.donorEmail && !utils.isValidEmail(request.donorEmail)) {
+                return { valid: false, error: '请输入正确的邮箱地址' };
+            }
+
+            // 验证捐赠方式
+            if (!request.donationMethod) {
+                return { valid: false, error: '请选择捐赠方式' };
+            }
+
+            // 验证地址
+            if (request.donationMethod === 'PICKUP') {
+                if (!request.donorAddress) {
+                    return { valid: false, error: '上门取件需要填写取件地址' };
+                }
+            } else if (request.donationMethod === 'MAIL') {
+                if (!request.receiverAddress) {
+                    return { valid: false, error: '邮寄方式需要填写接收地址' };
+                }
+            }
+
+            // 验证物资明细
+            if (!request.items || request.items.length === 0) {
+                return { valid: false, error: '请至少添加一个物资明细' };
+            }
+
+            if (request.items.length > 50) {
+                return { valid: false, error: '单次捐赠最多支持50个物资明细' };
+            }
+
+            // 验证每个物资项
+            for (let i = 0; i < request.items.length; i++) {
+                const item = request.items[i];
+                if (!item.name) {
+                    return { valid: false, error: `第 ${i + 1} 行：请填写物资名称` };
+                }
+                if (!item.quantity || item.quantity < 1) {
+                    return { valid: false, error: `第 ${i + 1} 行：数量必须大于0` };
+                }
+                if (!item.conditionLevel) {
+                    return { valid: false, error: `第 ${i + 1} 行：请选择新旧程度` };
+                }
+                if (!item.estimatedValue || item.estimatedValue < 0) {
+                    return { valid: false, error: `第 ${i + 1} 行：请填写正确的估算价值` };
+                }
+            }
+
+            return { valid: true };
         }
 
         // 收集物资项数据
@@ -1275,15 +1347,36 @@
         // 显示成功消息
         function showSuccessMessage(data) {
             document.getElementById('donationForm').classList.add('hidden');
-            document.getElementById('successMessage').classList.remove('hidden');
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.remove('hidden');
+
             document.getElementById('successDonationNo').textContent = data.donationNo;
             document.getElementById('successDonorName').textContent = data.donorName;
             document.getElementById('successTotalItems').textContent = data.totalItems + ' 件';
-            document.getElementById('successEstimatedValue').textContent = '¥' + (data.estimatedValue || 0).toFixed(2);
+            document.getElementById('successEstimatedValue').textContent = utils.formatMoney(data.estimatedValue || 0);
 
             // 滚动到顶部
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL参数获取预填信息
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            const studentId = urlParams.get('studentId');
+
+            if (category) {
+                const categorySelect = document.getElementById('categorySelect');
+                if (categorySelect) {
+                    categorySelect.value = category;
+                    updateCategoryDetails();
+                }
+            }
+
+            // 初始化其他功能
+            initFormSubmit();
+        });
     </script>
 
 </body>

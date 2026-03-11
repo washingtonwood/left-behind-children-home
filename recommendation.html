@@ -96,6 +96,9 @@
             }
         }
     </script>
+    <!-- 引入通用工具函数 -->
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/utils.js" defer></script>
 </head>
 <body class="font-sans text-gray-700 bg-gradient-to-br from-gray-50 via-orange-50/30 to-amber-50/30 min-h-screen antialiased">
 
@@ -241,6 +244,36 @@
         </div>
     </footer>
 
+    <!-- 学生详情弹窗 -->
+    <div id="studentDetailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <!-- 弹窗头部 -->
+            <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-gray-900">学生详情</h3>
+                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600 p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 弹窗内容 -->
+            <div id="modalContent" class="p-6">
+                <!-- 内容将通过JavaScript动态加载 -->
+            </div>
+
+            <!-- 弹窗底部 -->
+            <div class="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4 flex space-x-3">
+                <button onclick="closeDetailModal()" class="flex-1 px-6 py-3 border border-gray-300 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
+                    关闭
+                </button>
+                <a id="modalDonateBtn" href="#" class="flex-1 bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold text-center hover:from-primary-600 hover:to-primary-700 transition-all">
+                    立即捐赠
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
         // API 基础路径
         const API_BASE = 'http://localhost:8080/api/students';
@@ -252,38 +285,40 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('页面加载完成');
             loadRecommendations();
+            setupSearch();
         });
 
         // 加载推荐列表
         async function loadRecommendations() {
-            showLoading(true);
+            utils.showLoading('加载推荐学生...');
 
             try {
-                const params = new URLSearchParams();
-                if (currentFilters.category) params.append('category', currentFilters.category);
-                if (currentFilters.familyIncomeLevel) params.append('familyIncomeLevel', currentFilters.familyIncomeLevel);
-                if (currentFilters.minYear) params.append('minYear', currentFilters.minYear);
-                if (currentFilters.maxYear) params.append('maxYear', currentFilters.maxYear);
-                if (currentFilters.gender) params.append('gender', currentFilters.gender);
-                params.append('limit', 20);
+                const params = {};
+                if (currentFilters.category) params.category = currentFilters.category;
+                if (currentFilters.familyIncomeLevel) params.familyIncomeLevel = currentFilters.familyIncomeLevel;
+                if (currentFilters.minYear) params.minYear = currentFilters.minYear;
+                if (currentFilters.maxYear) params.maxYear = currentFilters.maxYear;
+                if (currentFilters.gender) params.gender = currentFilters.gender;
+                params.limit = 20;
 
-                console.log('请求参数:', params.toString());
+                console.log('请求参数:', params);
 
-                const response = await fetch(`${API_BASE}/recommendations?${params}`);
-                const result = await response.json();
+                const result = await utils.get('/recommendations', params);
 
                 console.log('API 响应:', result);
 
                 if (result.code === 0) {
                     displayRecommendations(result.data);
+                    utils.showToast(`加载成功，找到 ${result.data.length} 位学生`, 'success');
                 } else {
                     showError('加载失败：' + result.message);
                 }
             } catch (error) {
                 console.error('加载失败:', error);
-                showError('网络连接失败，请检查后端服务');
+                utils.showToast('网络连接失败，请检查后端服务', 'error');
+                showError('无法连接到服务器');
             } finally {
-                showLoading(false);
+                utils.hideLoading();
             }
         }
 
@@ -423,16 +458,161 @@
         }
 
         // 查看详情
-        function viewDetail(id) {
+        async function viewDetail(id) {
             console.log('查看详情，id=', id);
-            // TODO: 打开详情弹窗或跳转到详情页
-            alert('详情页开发中...');
+            utils.showLoading('加载学生详情...');
+
+            try {
+                const result = await utils.get(`/${id}`);
+                if (result.code === 0) {
+                    showDetailModal(result.data);
+                } else {
+                    utils.showToast('加载详情失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('加载详情失败:', error);
+                utils.showToast('加载详情失败，请重试', 'error');
+            } finally {
+                utils.hideLoading();
+            }
         }
 
-        // 显示/隐藏加载状态
+        // 显示详情弹窗
+        function showDetailModal(student) {
+            const modal = document.getElementById('studentDetailModal');
+            const content = document.getElementById('modalContent');
+            const donateBtn = document.getElementById('modalDonateBtn');
+
+            // 设置捐赠按钮链接
+            const firstDemand = student.demands && student.demands[0] ? student.demands[0].category : '';
+            donateBtn.href = `material-donation.html?category=${firstDemand}&studentId=${student.id}`;
+
+            // 填充内容
+            content.innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="w-24 h-24 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-12 h-12 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">${student.name}</h2>
+                    <p class="text-gray-500">${student.year}年级 ${student.clazz}</p>
+                    <div class="flex items-center justify-center space-x-2 mt-2">
+                        ${getLevelBadge(student.recommendationLevel)}
+                        <span class="text-sm text-gray-400">推荐权重: ${student.recommendationWeight}</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <p class="text-sm text-gray-500 mb-1">性别</p>
+                        <p class="font-semibold text-gray-900">${student.gender === '男' ? '男' : '女'}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <p class="text-sm text-gray-500 mb-1">学号</p>
+                        <p class="font-semibold text-gray-900">${student.sn || '-'}</p>
+                    </div>
+                </div>
+
+                ${student.familyCondition ? `
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-2">🏠 家庭情况</h4>
+                        <p class="text-gray-600">${student.familyCondition}</p>
+                    </div>
+                ` : ''}
+
+                ${student.urgentNeed ? `
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-2">⚡ 紧急需求</h4>
+                        <p class="text-primary-600">${student.urgentNeed}</p>
+                    </div>
+                ` : ''}
+
+                ${student.recommendationReason ? `
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-2">💡 推荐理由</h4>
+                        <p class="text-gray-600">${student.recommendationReason}</p>
+                    </div>
+                ` : ''}
+
+                ${student.demands && student.demands.length > 0 ? `
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">📦 需求物资</h4>
+                        <div class="space-y-2">
+                            ${student.demands.map(d => `
+                                <div class="bg-blue-50 rounded-lg p-3 flex justify-between items-center">
+                                    <div>
+                                        <p class="font-medium text-gray-800">${d.categoryDetail || d.category}</p>
+                                        <p class="text-sm text-gray-500">需求数量: ${d.requiredQuantity}</p>
+                                    </div>
+                                    ${d.urgencyLevel === 'URGENT' ? '<span class="badge badge-danger">紧急</span>' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        // 关闭详情弹窗
+        function closeDetailModal() {
+            const modal = document.getElementById('studentDetailModal');
+            modal.classList.add('hidden');
+        }
+
+        // 点击弹窗背景关闭
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('studentDetailModal');
+            if (e.target === modal) {
+                closeDetailModal();
+            }
+        });
+
+        // 设置搜索功能
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+
+            let searchTimer = null;
+            searchInput.addEventListener('input', function(e) {
+                clearTimeout(searchTimer);
+                const keyword = e.target.value.trim();
+
+                searchTimer = setTimeout(async () => {
+                    if (keyword.length > 0) {
+                        utils.showLoading('搜索中...');
+                        try {
+                            const result = await utils.get('/search', { keyword, limit: 20 });
+                            if (result.code === 0) {
+                                displayRecommendations(result.data);
+                                utils.showToast(`找到 ${result.data.length} 位学生`, 'success');
+                            }
+                        } catch (error) {
+                            utils.showToast('搜索失败，请重试', 'error');
+                        } finally {
+                            utils.hideLoading();
+                        }
+                    } else {
+                        loadRecommendations();
+                    }
+                }, 500);
+            });
+        }
+
+        // 显示/隐藏加载状态（兼容旧代码）
         function showLoading(show) {
-            document.getElementById('loadingState').classList.toggle('hidden', !show);
-            document.getElementById('recommendationsGrid').classList.toggle('hidden', show);
+            if (window.utils && utils.showLoading) {
+                if (show) {
+                    utils.showLoading('加载中...');
+                } else {
+                    utils.hideLoading();
+                }
+            } else {
+                document.getElementById('loadingState').classList.toggle('hidden', !show);
+                document.getElementById('recommendationsGrid').classList.toggle('hidden', show);
+            }
         }
 
         // 显示错误
