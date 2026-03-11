@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱心捐赠 - 守护童行</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(234, 88, 12, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(234, 88, 12, 0.5); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+        }
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes progressFill {
+            from { width: 0; }
+        }
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        @keyframes toast-slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes toast-slide-out {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        @keyframes loading-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .animate-heart-beat { animation: heartBeat 1.5s ease-in-out infinite; }
+        .animate-slide-in-right { animation: slideInRight 0.5s ease-out forwards; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+
+        /* Confetti styles */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: confetti-fall 3s linear forwards;
+        }
+
+        /* Toast styles */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            min-width: 300px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            animation: toast-slide-in 0.3s ease-out;
+        }
+        .toast.removing {
+            animation: toast-slide-out 0.3s ease-in forwards;
+        }
+        .toast-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        .toast-error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        .toast-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: loading-spin 0.8s linear infinite;
+        }
+
+        /* Input validation styles */
+        .input-error {
+            border-color: #ef4444 !important;
+            animation: shake 0.3s ease-in-out;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        /* Button loading state */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .btn-loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Impact card */
+        .impact-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.03) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+            animation: bounce-in 0.5s ease-out;
+        }
+
+        /* Success celebration */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .success-checkmark::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            animation: pulse-ring 1.5s ease-out infinite;
+        }
+        .success-checkmark svg {
+            position: relative;
+            z-index: 1;
+            width: 80px;
+            height: 80px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fb923c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .input-field {
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            transform: scale(1.02);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(234, 88, 12, 0.4);
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #ea580c, #f97316);
+            border-radius: 2px;
+        }
+        /* 进度条动画 */
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        /* 项目卡片样式 */
+        .project-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+            z-index: 1;
+        }
+        .project-card:hover::before {
+            left: 100%;
+        }
+        .project-card.selected {
+            border-color: #ea580c !important;
+            box-shadow: 0 8px 30px rgba(234, 88, 12, 0.2), 0 0 0 4px rgba(234, 88, 12, 0.1);
+            transform: translateY(-4px);
+        }
+        .project-card.selected .project-radio {
+            border-color: #ea580c;
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+        }
+        .project-card.selected .project-radio-inner {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* 金额选择样式 */
+        .amount-option {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .amount-option.selected {
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.1) 0%, rgba(251, 146, 60, 0.06) 100%);
+            border-color: #ea580c !important;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.2);
+            transform: scale(1.05);
+        }
+        .amount-option.selected .amount-radio {
+            border-color: #ea580c;
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+        }
+        .amount-option.selected .amount-radio-inner {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* 支付方式样式 */
+        .payment-option {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .payment-option::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 1rem;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .payment-option.selected::after {
+            opacity: 1;
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.05) 0%, rgba(251, 146, 60, 0.03) 100%);
+        }
+        .payment-option.selected {
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.08) 0%, rgba(251, 146, 60, 0.04) 100%);
+            border-color: #ea580c !important;
+            box-shadow: 0 8px 25px rgba(234, 88, 12, 0.15), 0 0 0 3px rgba(234, 88, 12, 0.1);
+            transform: translateY(-3px);
+        }
+        .payment-option.selected .payment-icon-wrapper {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3);
+        }
+        .payment-option.selected .payment-icon-wrapper svg {
+            filter: drop-shadow(0 2px 4px rgba(234, 88, 12, 0.3));
+        }
+        .payment-radio {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .payment-radio.selected {
+            border-color: #ea580c;
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+            transform: scale(1.2);
+        }
+        .payment-radio-inner {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .payment-radio-inner.selected {
+            opacity: 1;
+            transform: scale(1.2);
+            background: white;
+        }
+        /* 排行榜样式 */
+        .rank-item {
+            transition: all 0.3s ease;
+        }
+        .rank-item:hover {
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.05) 0%, rgba(251, 146, 60, 0.02) 100%);
+            transform: translateX(5px);
+        }
+        .rank-number {
+            font-weight: 700;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .rank-1 { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; }
+        .rank-2 { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); color: white; }
+        .rank-3 { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; }
+        .rank-other { background: #f1f5f9; color: #64748b; }
+
+        /* 感恩墙样式 */
+        .gratitude-card {
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        .gratitude-card:nth-child(1) { animation-delay: 0.1s; }
+        .gratitude-card:nth-child(2) { animation-delay: 0.2s; }
+        .gratitude-card:nth-child(3) { animation-delay: 0.3s; }
+        .gratitude-card:nth-child(4) { animation-delay: 0.4s; }
+        .gratitude-card:nth-child(5) { animation-delay: 0.5s; }
+        .gratitude-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* 定期捐赠选项 */
+        .recurring-option {
+            transition: all 0.3s ease;
+        }
+        .recurring-option.selected {
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.1) 0%, rgba(251, 146, 60, 0.06) 100%);
+            border-color: #ea580c !important;
+        }
+        .recurring-option.selected .recurring-badge {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+            color: white;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'system-ui', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans text-gray-700 bg-gradient-to-br from-gray-50 via-orange-50/30 to-amber-50/30 min-h-screen antialiased">
+
+    <!-- Toast 容器 -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-primary-200/40 to-primary-300/20 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-amber-200/40 to-orange-300/20 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-primary-100/20 to-transparent rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-4 left-4 right-4 glass-effect rounded-2xl shadow-xl z-50 animate-fade-in-up">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white animate-heart-beat" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
+                    <span class="font-serif text-xl font-bold gradient-text">守护童行</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="text-gray-600 hover:text-primary-600 transition-colors duration-200 font-medium">返回首页</a>
+                    <a href="#donation-form" class="btn-primary text-white px-6 py-2.5 rounded-full font-medium shadow-lg">立即捐赠</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <section class="relative pt-36 pb-16 px-4 overflow-hidden">
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <div class="flex justify-center space-x-8 mb-8 opacity-20">
+                <svg class="w-16 h-16 text-primary-500 animate-float" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <svg class="w-12 h-12 text-primary-400 animate-float" style="animation-delay: -1s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <svg class="w-14 h-14 text-primary-500 animate-float" style="animation-delay: -2s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+            </div>
+
+            <div class="animate-fade-in-up">
+                <span class="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-6">
+                    ❤️ 让爱心传递温暖
+                </span>
+                <h1 class="font-serif text-5xl sm:text-6xl font-bold text-gray-900 mb-6">
+                    爱心捐赠
+                </h1>
+                <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    您的每一份爱心，都将点亮留守儿童的未来之路。<br class="hidden sm:block">
+                    让我们携手同行，为孩子们创造更美好的明天。
+                </p>
+
+                <!-- 统计数据 -->
+                <div class="flex justify-center gap-8 sm:gap-16 mt-12">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold gradient-text">¥ 528万</div>
+                        <div class="text-sm text-gray-500 mt-1">累计捐款</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold gradient-text">32,580</div>
+                        <div class="text-sm text-gray-500 mt-1">爱心人次</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold gradient-text">1,280</div>
+                        <div class="text-sm text-gray-500 mt-1">受助儿童</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 募捐项目选择 -->
+    <section class="py-8 px-4 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 section-title inline-block">选择捐赠项目</h2>
+                <p class="text-sm text-gray-500 mt-3">您的爱心将用于何处</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 助学项目 -->
+                <label class="project-card cursor-pointer group">
+                    <input type="radio" name="project" value="education" class="hidden" checked>
+                    <div class="border-2 border-gray-200 rounded-2xl p-6 h-full bg-white card-hover relative">
+                        <div class="absolute top-4 right-4">
+                            <div class="project-radio w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center transition-all duration-300">
+                                <div class="project-radio-inner w-3 h-3 bg-white rounded-full opacity-0 transition-all duration-300"></div>
+                            </div>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">助学计划</h3>
+                        <p class="text-sm text-gray-500 mb-4">为留守儿童提供学习用品、辅导资料和教育支持</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">已筹集</span>
+                                <span class="font-semibold text-blue-600">¥ 328,500</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div class="progress-bar bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full" style="width: 65%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>目标 ¥ 500,000</span>
+                                <span>65%</span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- 医疗项目 -->
+                <label class="project-card cursor-pointer group">
+                    <input type="radio" name="project" value="medical" class="hidden">
+                    <div class="border-2 border-gray-200 rounded-2xl p-6 h-full bg-white card-hover relative">
+                        <div class="absolute top-4 right-4">
+                            <div class="project-radio w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center transition-all duration-300">
+                                <div class="project-radio-inner w-3 h-3 bg-white rounded-full opacity-0 transition-all duration-300"></div>
+                            </div>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">医疗救助</h3>
+                        <p class="text-sm text-gray-500 mb-4">为患病留守儿童提供医疗费用支持和康复帮助</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">已筹集</span>
+                                <span class="font-semibold text-red-600">¥ 156,800</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div class="progress-bar bg-gradient-to-r from-red-500 to-red-600 h-2 rounded-full" style="width: 52%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>目标 ¥ 300,000</span>
+                                <span>52%</span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- 生活改善项目 -->
+                <label class="project-card cursor-pointer group">
+                    <input type="radio" name="project" value="living" class="hidden">
+                    <div class="border-2 border-gray-200 rounded-2xl p-6 h-full bg-white card-hover relative">
+                        <div class="absolute top-4 right-4">
+                            <div class="project-radio w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center transition-all duration-300">
+                                <div class="project-radio-inner w-3 h-3 bg-white rounded-full opacity-0 transition-all duration-300"></div>
+                            </div>
+                        </div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">生活改善</h3>
+                        <p class="text-sm text-gray-500 mb-4">改善留守儿童的生活条件，提供被褥、衣物等物资</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">已筹集</span>
+                                <span class="font-semibold text-green-600">¥ 89,600</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div class="progress-bar bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>目标 ¥ 200,000</span>
+                                <span>45%</span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <!-- 捐赠表单 -->
+    <section id="donation-form" class="py-8 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <form id="donationForm" class="glass-effect rounded-3xl shadow-2xl p-8 sm:p-12 animate-fade-in-up delay-100">
+
+                <!-- 捐赠金额 -->
+                <div class="mb-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 section-title">捐赠金额</h2>
+                            <p class="text-sm text-gray-500 mt-1 ml-1">选择或输入您想捐赠的金额</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-4 ml-2 mb-4">
+                        <label class="amount-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="amount" value="10" class="hidden">
+                            <span class="amount-radio block w-5 h-5 border-2 border-gray-300 rounded-full mx-auto mb-2">
+                                <span class="amount-radio-inner block w-2.5 h-2.5 bg-white rounded-full opacity-0"></span>
+                            </span>
+                            <span class="text-lg font-bold text-gray-900">¥10</span>
+                        </label>
+                        <label class="amount-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="amount" value="50" class="hidden">
+                            <span class="amount-radio block w-5 h-5 border-2 border-gray-300 rounded-full mx-auto mb-2">
+                                <span class="amount-radio-inner block w-2.5 h-2.5 bg-white rounded-full opacity-0"></span>
+                            </span>
+                            <span class="text-lg font-bold text-gray-900">¥50</span>
+                        </label>
+                        <label class="amount-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="amount" value="100" class="hidden" checked>
+                            <span class="amount-radio block w-5 h-5 border-2 border-gray-300 rounded-full mx-auto mb-2">
+                                <span class="amount-radio-inner block w-2.5 h-2.5 bg-white rounded-full opacity-0"></span>
+                            </span>
+                            <span class="text-lg font-bold text-gray-900">¥100</span>
+                        </label>
+                        <label class="amount-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="amount" value="200" class="hidden">
+                            <span class="amount-radio block w-5 h-5 border-2 border-gray-300 rounded-full mx-auto mb-2">
+                                <span class="amount-radio-inner block w-2.5 h-2.5 bg-white rounded-full opacity-0"></span>
+                            </span>
+                            <span class="text-lg font-bold text-gray-900">¥200</span>
+                        </label>
+                        <label class="amount-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="amount" value="500" class="hidden">
+                            <span class="amount-radio block w-5 h-5 border-2 border-gray-300 rounded-full mx-auto mb-2">
+                                <span class="amount-radio-inner block w-2.5 h-2.5 bg-white rounded-full opacity-0"></span>
+                            </span>
+                            <span class="text-lg font-bold text-gray-900">¥500</span>
+                        </label>
+                        <label class="amount-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="amount" value="1000" class="hidden">
+                            <span class="amount-radio block w-5 h-5 border-2 border-gray-300 rounded-full mx-auto mb-2">
+                                <span class="amount-radio-inner block w-2.5 h-2.5 bg-white rounded-full opacity-0"></span>
+                            </span>
+                            <span class="text-lg font-bold text-gray-900">¥1000</span>
+                        </label>
+                    </div>
+                    <div class="ml-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">自定义金额</label>
+                        <div class="relative">
+                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">¥</span>
+                            <input type="number" name="customAmount" id="customAmount" min="1" step="0.01"
+                                class="input-field w-full pl-10 pr-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 bg-white text-lg font-semibold"
+                                placeholder="输入其他金额">
+                            <div class="error-message" id="customAmountError">请输入有效的金额</div>
+                        </div>
+                    </div>
+
+                    <!-- 捐赠影响展示 -->
+                    <div id="impactCard" class="impact-card ml-2 hidden">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0 mr-3">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900 mb-1">您的爱心将帮助</h4>
+                                <p id="impactText" class="text-sm text-gray-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 捐赠者信息 -->
+                <div class="mb-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 section-title">捐赠者信息</h2>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6 ml-2">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    姓名/昵称 <span class="text-red-500 ml-1">*</span>
+                                </span>
+                            </label>
+                            <input type="text" name="donorName" id="donorName" required
+                                class="input-field w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 bg-white"
+                                placeholder="请输入您的姓名或昵称">
+                            <div class="error-message" id="donorNameError">请输入您的姓名或昵称</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                    </svg>
+                                    手机号 <span class="text-red-500 ml-1">*</span>
+                                </span>
+                            </label>
+                            <input type="tel" name="donorPhone" id="donorPhone" required pattern="^1[3-9]\d{9}$"
+                                class="input-field w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 bg-white"
+                                placeholder="请输入手机号">
+                            <div class="error-message" id="donorPhoneError">请输入正确的手机号格式</div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    邮箱
+                                </span>
+                            </label>
+                            <input type="email" name="donorEmail"
+                                class="input-field w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 bg-white"
+                                placeholder="请输入邮箱（选填，用于接收捐赠证书）">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 支付方式 -->
+                <div class="mb-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg mr-4 animate-pulse-glow">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 section-title">支付方式</h2>
+                            <p class="text-sm text-gray-500 mt-1 ml-1">选择您方便的支付方式</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6 ml-2">
+                        <label class="payment-option cursor-pointer group">
+                            <input type="radio" name="paymentMethod" value="wechat" class="hidden" checked>
+                            <div class="border-2 border-gray-200 rounded-2xl p-6 h-full bg-white">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="payment-icon-wrapper w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.823 1.932-6.588.055-.054.048-.127.048-.127a.177.177 0 00-.016-.086c-.016-.058-.009-.119-.009-.18C8.691 2.322 8.691 2.188 8.691 2.188zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.363-5.29 1.85-1.72 1.643-2.687 4.007-1.78 6.622 1.135 3.257 4.617 5.61 8.691 5.61 1.27 0 2.497-.204 3.633-.572a.822.822 0 01.672.084l1.576.922a.272.272 0 00.14.045c.133 0 .241-.108.241-.242 0-.06-.024-.12-.038-.177l-.327-1.233a.527.527 0 01-.027-.158.49.49 0 01.201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.969-.982z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="payment-radio w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                        <div class="payment-radio-inner w-3 h-3 bg-white rounded-full opacity-0"></div>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-gray-900 text-lg mb-1">微信支付</h3>
+                                <p class="text-sm text-gray-500">使用微信扫码支付</p>
+                            </div>
+                        </label>
+                        <label class="payment-option cursor-pointer group">
+                            <input type="radio" name="paymentMethod" value="alipay" class="hidden">
+                            <div class="border-2 border-gray-200 rounded-2xl p-6 h-full bg-white">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="payment-icon-wrapper w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M21.422 15.358c.854-.386 1.574-.626 1.574-1.175 0-.39-.323-.596-.832-.739-.27-.075-.582-.12-.938-.12-.54 0-1.035.118-1.442.304-.084-.027-.17-.055-.256-.08-.22-.073-.45-.137-.688-.19-.105-.025-.21-.047-.318-.067.067-.145.136-.29.204-.436.112-.24.222-.48.332-.715.093-.2.186-.398.276-.595.107-.236.21-.469.312-.698.157-.354.306-.7.444-1.03.125-.3.244-.59.354-.866.096-.243.184-.476.264-.69.075-.2.14-.385.194-.55.08-.23.143-.43.185-.588.024-.087.044-.166.058-.233.012-.063.02-.118.023-.164.005-.07.008-.126.008-.164 0-.2-.04-.324-.108-.392-.067-.068-.18-.103-.334-.103-.097 0-.213.015-.346.046-.132.03-.283.08-.448.15-.166.07-.348.16-.544.268-.197.11-.41.237-.637.386-.228.15-.472.317-.73.5-.26.185-.534.386-.822.603-.29.216-.594.448-.912.693-.32.245-.652.503-.998.77-.345.267-.704.546-1.074.833-.37.288-.752.584-1.144.885-.393.3-.795.608-1.206.918-.41.31-.828.623-1.252.935-.424.31-.853.62-1.285.925-.432.304-.866.603-1.3.894-.035.023-.07.046-.105.07-.468.308-.937.607-1.406.894-.468.287-.935.56-1.398.814-.463.254-.923.487-1.376.695-.453.208-.9.39-1.337.542-.436.152-.864.274-1.28.363-.414.09-.818.146-1.208.168-.39.022-.764.01-1.12-.036-.355-.046-.693-.118-1.01-.216-.317-.098-.634-.23-.937-.4-.303-.17-.593-.374-.866-.613-.273-.24-.53-.513-.764-.82-.235-.307-.447-.648-.632-1.023-.185-.375-.343-.785-.468-1.23-.124-.445-.215-.924-.268-1.437-.052-.513-.065-1.06-.036-1.64.03-.582.1-1.2.217-1.85.117-.652.28-1.337.5-2.057.218-.72.493-1.475.826-2.266.333-.79.724-1.617 1.174-2.48.45-.863.957-1.762 1.523-2.697.566-.935 1.19-1.906 1.875-2.912.685-1.006 1.43-2.048 2.237-3.126.807-1.078 1.676-2.192 2.608-3.342.233-.283.47-.57.713-.86.242-.29.49-.583.742-.88.252-.296.51-.596.77-.9.26-.304.526-.612.795-.923.27-.31.543-.625.82-.943.276-.318.557-.64.84-.965.282-.325.568-.654.857-.986.29-.332.58-.667.874-1.006.294-.34.59-.683.887-1.03.298-.345.597-.693.897-1.044.3-.35.6-.704.9-1.06.3-.356.6-.714.898-1.075.298-.36.595-.723.89-1.087.295-.365.59-.732.882-1.1.292-.37.583-.74.87-1.113.288-.372.574-.746.857-1.12.283-.375.564-.75.842-1.126.278-.376.554-.752.826-1.128.272-.376.542-.752.808-1.127.266-.375.53-.75.79-1.123.26-.374.518-.746.77-1.117.254-.37.503-.74.748-1.108.245-.368.486-.734.722-1.098.236-.364.468-.726.695-1.086.227-.36.45-.718.668-1.073.218-.355.432-.708.64-1.058.208-.35.412-.697.61-1.04.198-.344.392-.684.58-1.02.188-.336.372-.668.55-.995.178-.327.352-.65.52-.967.168-.317.332-.63.49-.936.158-.307.312-.608.46-.903.148-.295.292-.584.43-.867.138-.283.272-.56.4-.83.128-.27.252-.533.37-.79.118-.256.232-.506.34-.75.108-.244.212-.482.31-.713.098-.23.192-.454.28-.67.088-.218.172-.43.25-.634.078-.205.152-.403.222-.594.07-.19.136-.374.197-.55.061-.176.118-.345.17-.506.052-.161.1-.315.142-.462.042-.147.08-.287.112-.42.032-.134.058-.26.08-.378.02-.12.036-.23.047-.332.01-.103.016-.198.016-.286 0-.27-.06-.43-.158-.52-.098-.09-.267-.135-.503-.135-.138 0-.304.023-.496.07-.19.046-.41.117-.655.21-.245.094-.515.21-.807.35-.293.14-.607.303-.94.49-.333.186-.685.395-1.054.626-.368.23-.754.482-1.155.756-.4.274-.817.57-1.247.887-.43.317-.874.655-1.33 1.014-.456.358-.924.737-1.402 1.136-.478.4-.967.82-1.465 1.26-.498.44-1.005.9-1.52 1.38-.514.48-1.036.978-1.564 1.495-.528.517-1.062 1.053-1.6 1.607-.537.554-1.08 1.126-1.623 1.716-.544.59-1.093 1.198-1.644 1.824-.55.626-1.104 1.27-1.657 1.93-.553.66-1.106 1.338-1.656 2.034-.55.696-1.098 1.41-1.64 2.14-.543.73-1.08 1.478-1.61 2.243-.528.765-1.05 1.547-1.56 2.346-.51.8-1.01 1.617-1.497 2.45-.487.834-.962 1.685-1.42 2.553-.458.868-.902 1.753-1.33 2.654-.427.9-.839 1.818-1.23 2.75-.392.932-.77 1.88-1.13 2.844-.36.964-.706 1.943-1.034 2.936-.328.993-.639 2-.928 3.02-.29 1.02-.558 2.054-.8 3.1-.242 1.046-.458 2.104-.645 3.174-.187 1.07-.345 2.152-.47 3.244-.124 1.092-.214 2.194-.265 3.305-.05 1.11-.06 2.23-.025 3.356.036 1.127.108 2.26.218 3.397.11 1.136.258 2.276.443 3.42.185 1.143.408 2.29.668 3.438.26 1.148.558 2.298.892 3.447.334 1.15.705 2.3 1.11 3.448.406 1.148.848 2.295 1.324 3.438.476 1.144.988 2.284 1.532 3.42.545 1.135 1.123 2.266 1.732 3.39.61 1.126 1.252 2.245 1.924 3.358.673 1.113 1.376 2.22 2.107 3.32.73 1.1 1.49 2.193 2.275 3.277.785 1.084 1.595 2.16 2.428 3.225.833 1.066 1.688 2.122 2.562 3.166.874 1.044 1.768 2.076 2.678 3.095.91 1.02 1.836 2.027 2.774 3.02.938.993 1.888 1.973 2.845 2.938.958.965 1.922 1.915 2.888 2.85.967.934 1.936 1.853 2.902 2.756.967.903 1.93 1.79 2.886 2.66.956.87 1.904 1.724 2.84 2.562.936.838 1.858 1.66 2.763 2.465.904.805 1.79 1.594 2.655 2.366.865.772 1.71 1.528 2.533 2.267.824.74 1.625 1.463 2.4 2.17.774.706 1.523 1.396 2.243 2.07.72.672 1.41 1.328 2.068 1.966.658.638 1.283 1.259 1.873 1.862.59.603 1.145 1.189 1.662 1.757.517.568.996 1.118 1.433 1.65.438.532.835 1.047 1.215 1.538.38.49.715.963 1.003 1.418.288.455.528.892.717 1.31.19.418.33.816.417 1.194.088.378.123.735.104 1.052-.02.317-.088.604-.203.86-.115.256-.278.482-.487.677-.21.195-.467.359-.77.49-.306.132-.657.23-1.054.296z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="payment-radio w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                        <div class="payment-radio-inner w-3 h-3 bg-white rounded-full opacity-0"></div>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-gray-900 text-lg mb-1">支付宝</h3>
+                                <p class="text-sm text-gray-500">使用支付宝扫码支付</p>
+                            </div>
+                        </label>
+                        <label class="payment-option cursor-pointer group">
+                            <input type="radio" name="paymentMethod" value="bank" class="hidden">
+                            <div class="border-2 border-gray-200 rounded-2xl p-6 h-full bg-white">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="payment-icon-wrapper w-14 h-14 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="payment-radio w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                        <div class="payment-radio-inner w-3 h-3 bg-white rounded-full opacity-0"></div>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-gray-900 text-lg mb-1">银行卡</h3>
+                                <p class="text-sm text-gray-500">使用银行卡在线支付</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 定期捐赠选项 -->
+                <div class="mb-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 section-title">定期捐赠</h2>
+                            <p class="text-sm text-gray-500 mt-1 ml-1">成为月捐人，持续传递爱心</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 ml-2">
+                        <label class="recurring-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="recurring" value="none" class="hidden" checked>
+                            <span class="recurring-badge inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 mb-2">单次捐赠</span>
+                            <p class="text-sm text-gray-600">一次性捐赠</p>
+                        </label>
+                        <label class="recurring-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="recurring" value="monthly" class="hidden">
+                            <span class="recurring-badge inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 mb-2">月度捐赠</span>
+                            <p class="text-sm text-gray-600">每月自动扣款</p>
+                        </label>
+                        <label class="recurring-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="recurring" value="quarterly" class="hidden">
+                            <span class="recurring-badge inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 mb-2">季度捐赠</span>
+                            <p class="text-sm text-gray-600">每3个月捐赠</p>
+                        </label>
+                        <label class="recurring-option border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer">
+                            <input type="radio" name="recurring" value="yearly" class="hidden">
+                            <span class="recurring-badge inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 mb-2">年度捐赠</span>
+                            <p class="text-sm text-gray-600">每年捐赠一次</p>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 留言 -->
+                <div class="mb-10">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 section-title">爱心留言</h2>
+                        </div>
+                    </div>
+                    <div class="ml-2">
+                        <textarea name="message" rows="3"
+                            class="input-field w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 bg-white resize-none"
+                            placeholder="写下您的祝福语（选填，将在感恩墙展示）"></textarea>
+                    </div>
+                </div>
+
+                <!-- 匿名捐赠选项 -->
+                <div class="mb-10">
+                    <label class="flex items-center cursor-pointer ml-2">
+                        <input type="checkbox" name="anonymous" class="w-5 h-5 text-primary-600 border-2 border-gray-300 rounded focus:ring-primary-500 transition-all duration-200">
+                        <span class="ml-3 text-sm text-gray-700">匿名捐赠（不在感恩墙和排行榜显示）</span>
+                    </label>
+                </div>
+
+                <!-- 提交按钮 -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <button type="submit" class="flex-1 btn-primary text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-xl animate-pulse-glow">
+                        <span class="flex items-center justify-center">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                            立即捐赠
+                        </span>
+                    </button>
+                    <a href="index.html" class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-10 py-5 rounded-2xl font-semibold transition-all duration-200 border-2 border-gray-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        取消
+                    </a>
+                </div>
+            </form>
+
+            <!-- 成功提示（初始隐藏） -->
+            <div id="successMessage" class="hidden glass-effect rounded-3xl shadow-2xl p-12 text-center animate-fade-in-up">
+                <div class="success-checkmark">
+                    <svg fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4 animate-fade-in-up">🎉 感谢您的爱心捐赠！</h2>
+                <p class="text-lg text-gray-600 mb-8 animate-fade-in-up delay-100">您的善举将温暖更多孩子的心</p>
+                <div class="bg-gradient-to-r from-primary-50 to-amber-50 rounded-2xl p-8 max-w-lg mx-auto mb-8 border-2 border-primary-100">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center pb-3 border-b border-primary-100">
+                            <span class="text-gray-600">捐赠项目</span>
+                            <span id="successProject" class="font-semibold text-gray-900"></span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-primary-100">
+                            <span class="text-gray-600">捐赠金额</span>
+                            <span id="successAmount" class="font-bold text-primary-600 text-lg"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">捐赠编号</span>
+                            <span id="successDonationNo" class="font-semibold text-gray-900"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button id="downloadCertBtn" class="btn-primary inline-flex items-center justify-center text-white px-10 py-4 rounded-2xl font-semibold shadow-xl">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        下载捐赠证书
+                    </button>
+                    <a href="index.html" class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-10 py-4 rounded-2xl font-semibold transition-all duration-200 border-2 border-gray-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        返回首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 捐赠排行榜 -->
+    <section class="py-12 px-4 relative z-10 bg-white/50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 section-title inline-block">爱心排行榜</h2>
+                <p class="text-sm text-gray-500 mt-3">感谢每一位爱心人士</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-effect rounded-2xl p-6 shadow-lg">
+                    <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                        </svg>
+                        累计捐赠榜
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-1 mr-4">1</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">爱心人士张先生</div>
+                                <div class="text-sm text-gray-500">已捐赠 12 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-primary-600">¥ 12,580</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-2 mr-4">2</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">李女士</div>
+                                <div class="text-sm text-gray-500">已捐赠 8 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-primary-600">¥ 8,600</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-3 mr-4">3</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">王先生</div>
+                                <div class="text-sm text-gray-500">已捐赠 15 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-primary-600">¥ 7,200</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-other mr-4">4</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">赵女士</div>
+                                <div class="text-sm text-gray-500">已捐赠 6 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-gray-700">¥ 5,400</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-other mr-4">5</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">刘先生</div>
+                                <div class="text-sm text-gray-500">已捐赠 5 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-gray-700">¥ 4,800</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-6 shadow-lg">
+                    <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        本月捐赠榜
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-1 mr-4">1</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">陈女士</div>
+                                <div class="text-sm text-gray-500">本月捐赠 3 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-primary-600">¥ 2,000</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-2 mr-4">2</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">周先生</div>
+                                <div class="text-sm text-gray-500">本月捐赠 2 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-primary-600">¥ 1,500</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-3 mr-4">3</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">吴女士</div>
+                                <div class="text-sm text-gray-500">本月捐赠 1 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-primary-600">¥ 1,000</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-other mr-4">4</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">郑先生</div>
+                                <div class="text-sm text-gray-500">本月捐赠 2 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-gray-700">¥ 800</div>
+                            </div>
+                        </div>
+                        <div class="rank-item flex items-center p-3 rounded-xl">
+                            <div class="rank-number rank-other mr-4">5</div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900">孙女士</div>
+                                <div class="text-sm text-gray-500">本月捐赠 1 次</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-gray-700">¥ 500</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 感恩墙 -->
+    <section class="py-12 px-4 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 section-title inline-block">感恩墙</h2>
+                <p class="text-sm text-gray-500 mt-3">每一份爱心都值得铭记</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="gratitude-card glass-effect rounded-2xl p-4 shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-3">李</div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">李女士</div>
+                            <div class="text-xs text-gray-500">捐赠 ¥100</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 italic">"希望孩子们都能健康快乐地成长！"</p>
+                </div>
+                <div class="gratitude-card glass-effect rounded-2xl p-4 shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center text-white font-bold mr-3">王</div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">王先生</div>
+                            <div class="text-xs text-gray-500">捐赠 ¥200</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 italic">"一点心意，愿孩子们有更好的学习环境"</p>
+                </div>
+                <div class="gratitude-card glass-effect rounded-2xl p-4 shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold mr-3">张</div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">张女士</div>
+                            <div class="text-xs text-gray-500">捐赠 ¥50</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 italic">"爱心传递，温暖童心"</p>
+                </div>
+                <div class="gratitude-card glass-effect rounded-2xl p-4 shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-red-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold mr-3">刘</div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">刘先生</div>
+                            <div class="text-xs text-gray-500">捐赠 ¥500</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 italic">"携手同行，为孩子们点亮希望"</p>
+                </div>
+                <div class="gratitude-card glass-effect rounded-2xl p-4 shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-500 rounded-full flex items-center justify-center text-white font-bold mr-3">陈</div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">陈女士</div>
+                            <div class="text-xs text-gray-500">捐赠 ¥150</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 italic">"愿每个孩子都有温暖的童年"</p>
+                </div>
+                <div class="gratitude-card glass-effect rounded-2xl p-4 shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold mr-3">赵</div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">赵先生</div>
+                            <div class="text-xs text-gray-500">捐赠 ¥300</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 italic">"爱心汇聚，温暖同行"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-16 mt-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-white animate-heart-beat" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
+                        <span class="font-serif text-2xl font-bold">守护童行</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        致力于为留守儿童提供资金和物资帮助，让每一个孩子都能感受到社会的温暖与关爱。
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-6">快速链接</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-primary-400 transition-colors">关于我们</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition-colors">捐赠指南</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition-colors">透明公示</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition-colors">联系我们</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-6">联系方式</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            400-123-4567
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            contact@shouhutongxing.com
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            湖北省武汉市东湖生态旅游风景管理区
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center">
+                <p class="text-gray-500 text-sm">© 2025 守护童行. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== 工具函数 ====================
+
+        // Toast 通知系统
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+
+            const icons = {
+                success: '<svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+                error: '<svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+                warning: '<svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>'
+            };
+
+            toast.innerHTML = `${icons[type]}<span class="flex-1">${message}</span>`;
+            container.appendChild(toast);
+
+            // 3秒后自动移除
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // 撒花动画
+        function createConfetti() {
+            const colors = ['#ea580c', '#f97316', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+            const confettiCount = 100;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        // 获取捐赠影响文案
+        function getImpactText(projectType, amount) {
+            const impacts = {
+                education: {
+                    unit: '本',
+                    baseCost: 30,
+                    text: (count) => `可为留守儿童提供 ${count} 本课外读物，点亮知识之光`
+                },
+                medical: {
+                    unit: '次',
+                    baseCost: 200,
+                    text: (count) => `可为患病儿童提供 ${count} 次医疗检查，守护健康成长`
+                },
+                living: {
+                    unit: '套',
+                    baseCost: 150,
+                    text: (count) => `可为孩子们提供 ${count} 套保暖被褥，温暖每个夜晚`
+                }
+            };
+
+            const impact = impacts[projectType];
+            const count = Math.max(1, Math.floor(amount / impact.baseCost));
+            return impact.text(count);
+        }
+
+        // 表单验证
+        function validateForm() {
+            let isValid = true;
+
+            // 验证姓名
+            const donorName = document.getElementById('donorName');
+            const donorNameError = document.getElementById('donorNameError');
+            if (!donorName.value.trim()) {
+                donorName.classList.add('input-error');
+                donorNameError.classList.add('show');
+                isValid = false;
+            } else {
+                donorName.classList.remove('input-error');
+                donorNameError.classList.remove('show');
+            }
+
+            // 验证手机号
+            const donorPhone = document.getElementById('donorPhone');
+            const donorPhoneError = document.getElementById('donorPhoneError');
+            const phonePattern = /^1[3-9]\d{9}$/;
+            if (!phonePattern.test(donorPhone.value)) {
+                donorPhone.classList.add('input-error');
+                donorPhoneError.classList.add('show');
+                isValid = false;
+            } else {
+                donorPhone.classList.remove('input-error');
+                donorPhoneError.classList.remove('show');
+            }
+
+            // 验证金额
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // ==================== API 基础配置 ====================
+        const API_BASE = 'http://localhost:8080/api/fund-donations';
+
+        // ==================== DOM 加载初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProjectStatistics();
+            loadLeaderboards();
+            loadGratitudeWall();
+            initProjectSelection();
+            initAmountSelection();
+            initPaymentSelection();
+            initRecurringSelection();
+            initFormValidation();
+            initFormSubmit();
+            animateProgressBars();
+        });
+
+        // ==================== 数据加载 ====================
+
+        // 加载项目统计数据
+        async function loadProjectStatistics() {
+            try {
+                const response = await fetch(`${API_BASE}/statistics`);
+                const result = await response.json();
+                if (result.code === 0) {
+                    updateProjectCards(result.data);
+                }
+            } catch (error) {
+                console.error('加载项目统计失败:', error);
+            }
+        }
+
+        // 更新项目卡片显示
+        function updateProjectCards(statistics) {
+            Object.keys(statistics).forEach(projectType => {
+                const stat = statistics[projectType];
+                const projectCard = document.querySelector(`input[name="project"][value="${projectType.toLowerCase()}"]`);
+                if (projectCard) {
+                    const card = projectCard.closest('.project-card');
+                    const amountElement = card.querySelector('.font-semibold');
+                    const progressBar = card.querySelector('.progress-bar');
+                    const percentElement = card.querySelector('.text-xs.text-gray-500:last-child');
+
+                    if (amountElement) {
+                        amountElement.textContent = '¥ ' + stat.raisedAmount.toLocaleString();
+                    }
+                    if (progressBar) {
+                        progressBar.style.width = stat.percentage + '%';
+                    }
+                    if (percentElement) {
+                        percentElement.textContent = stat.percentage + '%';
+                    }
+                }
+            });
+        }
+
+        // 加载排行榜数据
+        async function loadLeaderboards() {
+            try {
+                const [monthlyResponse, cumulativeResponse] = await Promise.all([
+                    fetch(`${API_BASE}/leaderboard/monthly`),
+                    fetch(`${API_BASE}/leaderboard/cumulative`)
+                ]);
+
+                const monthlyResult = await monthlyResponse.json();
+                const cumulativeResult = await cumulativeResponse.json();
+
+                if (monthlyResult.code === 0) {
+                    updateMonthlyLeaderboard(monthlyResult.data);
+                }
+                if (cumulativeResult.code === 0) {
+                    updateCumulativeLeaderboard(cumulativeResult.data);
+                }
+            } catch (error) {
+                console.error('加载排行榜失败:', error);
+            }
+        }
+
+        // 更新本月排行榜
+        function updateMonthlyLeaderboard(data) {
+            const leaderboard = document.querySelector('.rank-item')?.closest('.glass-effect')?.nextElementSibling;
+            if (!leaderboard) return;
+
+            const rankList = leaderboard.querySelector('.space-y-3');
+            rankList.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-other';
+                const rankNumber = index + 1;
+
+                const rankItem = document.createElement('div');
+                rankItem.className = 'rank-item flex items-center p-3 rounded-xl';
+                rankItem.innerHTML = `
+                    <div class="rank-number ${rankClass} mr-4">${rankNumber}</div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-900">${item.donorName}</div>
+                        <div class="text-sm text-gray-500">本月捐赠 ${item.donationCount || 1} 次</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold ${index < 3 ? 'text-primary-600' : 'text-gray-700'}">¥ ${item.totalAmount.toLocaleString()}</div>
+                    </div>
+                `;
+                rankList.appendChild(rankItem);
+            });
+        }
+
+        // 更新累计排行榜
+        function updateCumulativeLeaderboard(data) {
+            const leaderboard = document.querySelector('.rank-item')?.closest('.glass-effect');
+            if (!leaderboard) return;
+
+            const rankList = leaderboard.querySelector('.space-y-3');
+            rankList.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-other';
+                const rankNumber = index + 1;
+
+                const rankItem = document.createElement('div');
+                rankItem.className = 'rank-item flex items-center p-3 rounded-xl';
+                rankItem.innerHTML = `
+                    <div class="rank-number ${rankClass} mr-4">${rankNumber}</div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-900">${item.donorName}</div>
+                        <div class="text-sm text-gray-500">已捐赠 ${item.donationCount || 1} 次</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold ${index < 3 ? 'text-primary-600' : 'text-gray-700'}">¥ ${item.totalAmount.toLocaleString()}</div>
+                    </div>
+                `;
+                rankList.appendChild(rankItem);
+            });
+        }
+
+        // 加载感恩墙数据
+        async function loadGratitudeWall() {
+            try {
+                const response = await fetch(`${API_BASE}/gratitude-wall`);
+                const result = await response.json();
+                if (result.code === 0) {
+                    updateGratitudeWall(result.data);
+                }
+            } catch (error) {
+                console.error('加载感恩墙失败:', error);
+            }
+        }
+
+        // 更新感恩墙显示
+        function updateGratitudeWall(data) {
+            const gratitudeWall = document.querySelector('.grid.grid-cols-2');
+            if (!gratitudeWall) return;
+
+            gratitudeWall.innerHTML = '';
+
+            const colors = ['blue', 'green', 'purple', 'red', 'amber', 'teal'];
+            data.forEach((item, index) => {
+                const color = colors[index % colors.length];
+                const lastName = item.donorName.charAt(0);
+
+                const card = document.createElement('div');
+                card.className = 'gratitude-card glass-effect rounded-2xl p-4 shadow-md card-hover';
+                card.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-${color}-400 to-${color}-500 rounded-full flex items-center justify-center text-white font-bold mr-3">${lastName}</div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">${item.donorName}</div>
+                            <div class="text-xs text-gray-500">捐赠 ¥${item.amount}</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 italic">"${item.message || '感谢您的爱心捐赠！'}"</p>
+                `;
+                gratitudeWall.appendChild(card);
+            });
+        }
+
+        // ==================== 交互初始化 ====================
+
+        // 项目选择
+        function initProjectSelection() {
+            const projectInputs = document.querySelectorAll('input[name="project"]');
+            projectInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    document.querySelectorAll('.project-card').forEach(card => {
+                        card.classList.remove('selected');
+                        const radio = card.querySelector('.project-radio');
+                        const inner = card.querySelector('.project-radio-inner');
+                        radio.classList.remove('selected');
+                        inner.classList.remove('selected');
+                    });
+                    const selectedCard = this.closest('.project-card');
+                    selectedCard.classList.add('selected');
+                    const selectedRadio = selectedCard.querySelector('.project-radio');
+                    const selectedInner = selectedCard.querySelector('.project-radio-inner');
+                    selectedRadio.classList.add('selected');
+                    selectedInner.classList.add('selected');
+
+                    // 更新影响展示
+                    updateImpactDisplay();
+                });
+            });
+            document.querySelector('input[name="project"]:checked')?.dispatchEvent(new Event('change'));
+        }
+
+        // 金额选择
+        function initAmountSelection() {
+            const amountInputs = document.querySelectorAll('input[name="amount"]');
+            const customAmountInput = document.getElementById('customAmount');
+            const amountOptions = document.querySelectorAll('.amount-option');
+
+            amountInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    customAmountInput.value = '';
+                    clearErrors();
+                    amountOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                        const radio = opt.querySelector('.amount-radio');
+                        const inner = opt.querySelector('.amount-radio-inner');
+                        radio.classList.remove('selected');
+                        inner.classList.remove('selected');
+                    });
+                    const selectedOption = this.closest('.amount-option');
+                    selectedOption.classList.add('selected');
+                    const selectedRadio = selectedOption.querySelector('.amount-radio');
+                    const selectedInner = selectedOption.querySelector('.amount-radio-inner');
+                    selectedRadio.classList.add('selected');
+                    selectedInner.classList.add('selected');
+
+                    updateImpactDisplay();
+                });
+            });
+
+            customAmountInput.addEventListener('input', function() {
+                if (this.value) {
+                    amountInputs.forEach(input => input.checked = false);
+                    amountOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                        const radio = opt.querySelector('.amount-radio');
+                        const inner = opt.querySelector('.amount-radio-inner');
+                        radio.classList.remove('selected');
+                        inner.classList.remove('selected');
+                    });
+                    updateImpactDisplay();
+                } else {
+                    hideImpactCard();
+                }
+            });
+
+            customAmountInput.addEventListener('blur', function() {
+                const value = parseFloat(this.value);
+                if (this.value && (isNaN(value) || value < 0.01)) {
+                    this.classList.add('input-error');
+                    document.getElementById('customAmountError').classList.add('show');
+                } else {
+                    this.classList.remove('input-error');
+                    document.getElementById('customAmountError').classList.remove('show');
+                }
+            });
+
+            document.querySelector('input[name="amount"]:checked')?.dispatchEvent(new Event('change'));
+        }
+
+        // 更新影响展示
+        function updateImpactDisplay() {
+            const projectInput = document.querySelector('input[name="project"]:checked');
+            const amountInput = document.querySelector('input[name="amount"]:checked');
+            const customAmount = document.getElementById('customAmount').value;
+
+            if (!projectInput) return;
+
+            const projectType = projectInput.value;
+            let amount = 0;
+
+            if (customAmount) {
+                amount = parseFloat(customAmount);
+            } else if (amountInput) {
+                amount = parseFloat(amountInput.value);
+            }
+
+            if (amount > 0) {
+                const impactText = getImpactText(projectType, amount);
+                document.getElementById('impactText').textContent = impactText;
+                document.getElementById('impactCard').classList.remove('hidden');
+            } else {
+                hideImpactCard();
+            }
+        }
+
+        // 隐藏影响卡片
+        function hideImpactCard() {
+            document.getElementById('impactCard').classList.add('hidden');
+        }
+
+        // 支付方式选择
+        function initPaymentSelection() {
+            const paymentInputs = document.querySelectorAll('input[name="paymentMethod"]');
+            const paymentOptions = document.querySelectorAll('.payment-option');
+
+            paymentInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    paymentOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                        const radio = opt.querySelector('.payment-radio');
+                        const inner = opt.querySelector('.payment-radio-inner');
+                        radio.classList.remove('selected');
+                        inner.classList.remove('selected');
+                    });
+                    const selectedOption = this.closest('.payment-option');
+                    selectedOption.classList.add('selected');
+                    const selectedRadio = selectedOption.querySelector('.payment-radio');
+                    const selectedInner = selectedOption.querySelector('.payment-radio-inner');
+                    selectedRadio.classList.add('selected');
+                    selectedInner.classList.add('selected');
+                });
+            });
+
+            document.querySelector('input[name="paymentMethod"]:checked')?.dispatchEvent(new Event('change'));
+        }
+
+        // 定期捐赠选择
+        function initRecurringSelection() {
+            const recurringInputs = document.querySelectorAll('input[name="recurring"]');
+            const recurringOptions = document.querySelectorAll('.recurring-option');
+
+            recurringInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    recurringOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                        const badge = opt.querySelector('.recurring-badge');
+                        badge.classList.remove('selected');
+                    });
+                    const selectedOption = this.closest('.recurring-option');
+                    selectedOption.classList.add('selected');
+                    const selectedBadge = selectedOption.querySelector('.recurring-badge');
+                    selectedBadge.classList.add('selected');
+                });
+            });
+
+            document.querySelector('input[name="recurring"]:checked')?.dispatchEvent(new Event('change'));
+        }
+
+        // 表单实时验证
+        function initFormValidation() {
+            const donorName = document.getElementById('donorName');
+            const donorPhone = document.getElementById('donorPhone');
+
+            donorName.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.classList.add('input-error');
+                    document.getElementById('donorNameError').classList.add('show');
+                } else {
+                    this.classList.remove('input-error');
+                    document.getElementById('donorNameError').classList.remove('show');
+                }
+            });
+
+            donorPhone.addEventListener('blur', function() {
+                const phonePattern = /^1[3-9]\d{9}$/;
+                if (!phonePattern.test(this.value)) {
+                    this.classList.add('input-error');
+                    document.getElementById('donorPhoneError').classList.add('show');
+                } else {
+                    this.classList.remove('input-error');
+                    document.getElementById('donorPhoneError').classList.remove('show');
+                }
+            });
+        }
+
+        // 清除所有错误状态
+        function clearErrors() {
+            document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+        }
+
+        // 进度条动画
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+        }
+
+        // ==================== 表单提交 ====================
+
+        function initFormSubmit() {
+            const form = document.getElementById('donationForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // 验证表单
+                if (!validateForm()) {
+                    showToast('请检查表单填写是否正确', 'warning');
+                    return;
+                }
+
+                // 收集表单数据
+                const formData = new FormData(this);
+                const projectInput = document.querySelector('input[name="project"]:checked');
+                const project = projectInput.closest('.project-card').querySelector('h3').textContent;
+                const projectValue = projectInput.value.toUpperCase();
+                const amountInput = document.querySelector('input[name="amount"]:checked');
+                const customAmount = formData.get('customAmount');
+                const amount = customAmount ? parseFloat(customAmount) : parseFloat(amountInput.value);
+                const donorName = formData.get('donorName');
+                const donorPhone = formData.get('donorPhone');
+                const donorEmail = formData.get('donorEmail');
+                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value.toUpperCase();
+                const recurringType = document.querySelector('input[name="recurring"]:checked').value.toUpperCase();
+                const message = formData.get('message');
+                const isAnonymous = formData.get('anonymous') === 'on';
+
+                // 显示加载状态
+                submitBtn.classList.add('btn-loading');
+                submitBtn.disabled = true;
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<div class="loading-spinner"></div>';
+
+                // 构建请求数据
+                const request = {
+                    projectType: projectValue,
+                    amount: amount,
+                    donorName: donorName,
+                    donorPhone: donorPhone,
+                    donorEmail: donorEmail || null,
+                    paymentMethod: paymentMethod,
+                    recurringType: recurringType,
+                    message: message || null,
+                    isAnonymous: isAnonymous
+                };
+
+                try {
+                    const response = await fetch(`${API_BASE}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(request)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.code === 0) {
+                        // 撒花庆祝
+                        createConfetti();
+
+                        // 显示成功提示
+                        showToast('捐赠成功！感谢您的爱心', 'success');
+
+                        // 重新加载数据
+                        await Promise.all([
+                            loadProjectStatistics(),
+                            loadLeaderboards(),
+                            loadGratitudeWall()
+                        ]);
+
+                        // 显示成功消息
+                        form.classList.add('hidden');
+                        const successMessage = document.getElementById('successMessage');
+                        successMessage.classList.remove('hidden');
+                        document.getElementById('successProject').textContent = project;
+                        document.getElementById('successAmount').textContent = '¥ ' + amount.toFixed(2);
+                        document.getElementById('successDonationNo').textContent = result.data.donationNo;
+
+                        // 滚动到顶部
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        showToast(result.message || '提交失败，请稍后重试', 'error');
+                    }
+                } catch (error) {
+                    console.error('提交失败:', error);
+                    showToast('网络连接失败，请检查后端服务是否启动', 'error');
+                } finally {
+                    // 恢复按钮状态
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            });
+        }
+        }
+    </script>
+
+</body>
+</html>

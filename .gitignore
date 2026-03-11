@@ -1,2 +1,50 @@
+# 操作系统文件
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# 日志文件
+*.log
+hs_err_pid*.log
+replay_pid*.log
+
+# 临时文件
+nul
+*.tmp
+
+# 启动脚本（本地配置）
+*.bat
+*.ps1
+启动*.md
+安装*.md
+
+# 测试文件
+test-*.html
+test-*.json
+test-*.ps1
+quick-test.html
+simple-donation.html
+
+# SQL脚本（数据库初始化）
+*.sql
+
+# Claude设置（本地）
+.claude/settings.local.json
+
+# Maven/Java构建产物
+shouhutongxing-backend/target/
+*.jar
+*.war
+*.class
+maven.tar.gz
+maven.zip
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
