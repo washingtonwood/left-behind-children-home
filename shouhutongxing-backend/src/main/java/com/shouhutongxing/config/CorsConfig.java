@@ -21,8 +21,12 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 允许所有来源（开发环境）
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        // 允许前端地址
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:5500"
+        ));
 
         // 允许所有请求头
         configuration.setAllowedHeaders(Arrays.asList("*"));
